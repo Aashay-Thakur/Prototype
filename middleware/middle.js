@@ -11,21 +11,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/info", async (req, res) => {
-	var result = await axios({
+	let result = await axios({
 		method: "get",
-		// url: "http://localhost:3001/info",
-		url: "http://test.loca.lt/info",
+		url: "http://localhost:3001/info",
+		// url: "http://test.loca.lt/info",
 	});
 	res.setHeader("Content-Type", "application/json");
 	res.send(JSON.stringify(result.data));
 });
 
-app.post("/shutdown", async (req, res) => {
-	await axios({
-		method: "post",
-		// url: "http://localhost:3001/shutdown",
-		url: "http://test.loca.lt/shutdown",
+app.get("/shutdown", async (req, res) => {
+	let result = await axios({
+		method: "get",
+		url: "http://localhost:3001/shutdown",
+		// url: "http://test.loca.lt/shutdown",
 	});
+	res.setHeader("Content-Type", "text/plain");
+	res.send(result.data);
 });
 
 app.listen(3000, () => {

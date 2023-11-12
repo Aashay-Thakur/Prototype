@@ -11,12 +11,14 @@ getInfoButton.addEventListener("click", async () => {
 const shutdownButton = document.querySelector(".shutDownButton");
 shutdownButton.addEventListener("click", async () => {
 	const result = await axios({
-		method: "post",
+		method: "get",
 		url: "http://localhost:3000/shutdown",
 	});
+	displayInfo({ reply: result.data });
 });
 
 function displayInfo(data) {
+	output.innerHTML = "";
 	Object.keys(data).forEach((key) => {
 		const p = document.createElement("p");
 		if (typeof data[key] === "string") {
