@@ -27,5 +27,9 @@ def shutdown():
     # /f - to force the shutdown (force close all running applications)
     return 'Server shutting down...'
 
+@app.route('/applications', methods=['GET'])
+def applications():
+    return 'List of applications'
+
 if __name__ == '__main__':
     app.run(host='localhost', port=3001, debug=True)

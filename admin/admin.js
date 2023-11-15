@@ -1,5 +1,9 @@
 const getInfoButton = document.querySelector(".getInfoButton");
+const shutdownButton = document.querySelector(".shutDownButton");
+const applicationsButton = document.querySelector(".showApplications");
+
 const output = document.querySelector(".output");
+
 getInfoButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
@@ -8,13 +12,20 @@ getInfoButton.addEventListener("click", async () => {
 	displayInfo(result.data);
 });
 
-const shutdownButton = document.querySelector(".shutDownButton");
 shutdownButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
 		url: "http://localhost:3000/shutdown",
 	});
 	displayInfo({ reply: result.data });
+});
+
+applicationsButton.addEventListener("click", async () => {
+	const result = await axios({
+		method: "get",
+		url: "http://localhost:3000/applications",
+	});
+	displayInfo({ data: result.data });
 });
 
 function displayInfo(data) {

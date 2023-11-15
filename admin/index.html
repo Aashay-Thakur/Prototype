@@ -33,11 +33,18 @@
 				max-height: 500px;
 				overflow-y: auto;
 			}
+			.buttonWrapper {
+				display: flex;
+				gap: 2rem;
+			}
 		</style>
 	</head>
 	<body>
-		<div class="getInfoButton btn">Get Info</div>
-		<div class="shutDownButton btn">Shutdown</div>
+		<div class="buttonWrapper">
+			<div class="getInfoButton btn">Get Info</div>
+			<div class="shutDownButton btn">Shutdown</div>
+			<div class="btn showApplications">Applications</div>
+		</div>
 		<div class="output"></div>
 	</body>
 	<script src="./admin.js"></script>
