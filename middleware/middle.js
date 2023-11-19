@@ -10,39 +10,52 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const url = "https://empty-eagle-15.loca.lt";
+const urls = ["http://localhost:3001", "http://localhost:3002"];
 
 app.get("/info", async (req, res) => {
-	let result = await axios({
-		method: "get",
-		// url: "http://localhost:3001/info",
-		// url: "http://test.loca.lt/info",
-		url: url + "/info",
+	let requests = urls.map((url) => axios.get(url + "/info"));
+
+	let results = await Promise.allSettled(requests);
+	let returnData = [];
+	results.forEach((res) => {
+		if (res.status === "fulfilled") {
+			returnData.push(res.value.data);
+		} else {
+			returnData.push({ status: "failed", reason: res.reason.code, url: res.reason.config.url });
+		}
 	});
 	res.setHeader("Content-Type", "application/json");
-	res.send(JSON.stringify(result.data));
+	res.send(JSON.stringify(returnData));
 });
 
 app.get("/shutdown", async (req, res) => {
-	let result = await axios({
-		method: "get",
-		// url: "http://localhost:3001/shutdown",
-		// url: "http://test.loca.lt/shutdown",
-		url: url + "/shutdown",
+	let requests = urls.map((url) => axios.get(url + "/shutdown"));
+	let results = await Promise.allSettled(requests);
+	let returnData = [];
+	results.forEach((res) => {
+		if (res.status === "fulfilled") {
+			returnData.push(res.value.data);
+		} else {
+			returnData.push({ status: "failed", reason: res.reason.code, url: res.reason.config.url });
+		}
 	});
-	res.setHeader("Content-Type", "text/plain");
-	res.send(result.data);
+	res.setHeader("Content-Type", "application/json");
+	res.send(JSON.stringify(returnData));
 });
 
 app.get("/applications", async (req, res) => {
-	let result = await axios({
-		method: "get",
-		// url: "http://localhost:3001/applications",
-		// url: "http://test.loca.lt/applications",
-		url: url + "/applications",
+	let requests = urls.map((url) => axios.get(url + "/applications"));
+	let results = await Promise.allSettled(requests);
+	let returnData = [];
+	results.forEach((res) => {
+		if (res.status === "fulfilled") {
+			returnData.push(res.value.data);
+		} else {
+			returnData.push({ status: "failed", reason: res.reason.code, url: res.reason.config.url });
+		}
 	});
 	res.setHeader("Content-Type", "application/json");
-	res.send(JSON.stringify(result.data));
+	res.send(JSON.stringify(returnData));
 });
 
 app.listen(3000, () => {

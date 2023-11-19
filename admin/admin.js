@@ -9,6 +9,7 @@ getInfoButton.addEventListener("click", async () => {
 		method: "get",
 		url: "http://localhost:3000/info",
 	});
+	console.log(result);
 	displayInfo(result.data);
 });
 
