@@ -38,9 +38,19 @@
 				display: flex;
 				gap: 2rem;
 			}
+			.inputWrapper {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+			}
 		</style>
 	</head>
 	<body>
+		<div class="inputWrapper">
+			<label for="applicationName">Name of Application</label>
+			<input type="text" name="applicationName" id="applicationName" />
+			<div class="btn searchApplication">Search App</div>
+		</div>
 		<div class="buttonWrapper">
 			<div class="getInfoButton btn">Get Info</div>
 			<div class="shutDownButton btn">Shutdown</div>

@@ -2,6 +2,7 @@ const getInfoButton = document.querySelector(".getInfoButton");
 const shutdownButton = document.querySelector(".shutDownButton");
 const applicationsButton = document.querySelector(".showApplications");
 const checkFlatpackButton = document.querySelector(".checkFlatpack");
+const searchApp = document.querySelector(".searchApplication");
 
 const output = document.querySelector(".output");
 
@@ -12,6 +13,16 @@ getInfoButton.addEventListener("click", async () => {
 	});
 	console.log(result);
 	displayInfo(result.data);
+});
+
+searchApp.addEventListener("click", async () => {
+	const result = await axios({
+		method: "get",
+		data: {
+			appName: "firefox",
+		},
+		url: "http://localhost:3000/search-app",
+	});
 });
 
 shutdownButton.addEventListener("click", async () => {
@@ -33,11 +44,9 @@ applicationsButton.addEventListener("click", async () => {
 checkFlatpackButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
-		url: "http://localhost:3000/check-flatpack",
+		url: "http://localhost:3000/check-flatpak",
 	});
-
-	output.innerHTML = "";
-	output.innerHTML = `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
+	console.log(result);
 });
 
 function displayInfo(data) {

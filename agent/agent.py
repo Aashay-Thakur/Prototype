@@ -9,7 +9,7 @@ import os
 app = Flask(__name__)
 
 @app.route('/info', methods=['GET'])
-def getInfo():
+def get_info():
     data = {
         "platform": platform.system(),
         "release": platform.release(),
@@ -29,7 +29,7 @@ def getInfo():
 def shutdown():
     # os.system('shutdown /s') # for windows
     os.system('shutdown -h now') # for linux
-    ip = getIP()
+    ip = get_ip()
     data = {
         "ip": ip['ip'],
         "hostname": ip['hostname'],
@@ -37,21 +37,13 @@ def shutdown():
     }
     return jsonify(data)
 
-@app.route('/check-flatpack', methods=['GET'])
-def checkFlatpack():
-    data = subprocess.check_output(['flatpak', '--version'])
+@app.route('/search-app', methods=['GET'])
+def search_app():
+    app_name = request.args.get('name')
+    data = subprocess.check_output(['flatpack', 'search', app_name])
     data = data.decode('utf-8')
     data = data.split('\n')
-    data = data[0]
-    return jsonify(data)
-
-@app.route('/install-flatpack', methods=['GET'])
-def installFlatpack():
-    password = "mca@123"
-    data = subprocess.check_output(['echo', password, '|', 'sudo', '-S', 'apt', 'install', 'flatpak', '-y'])
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[0]
+    data = data[1:-2]
     return jsonify(data)
     
 
@@ -63,7 +55,7 @@ def applications():
     data = data[1:-2]
     return jsonify(data)
 
-def getIP():
+def get_ip():
     return {
         "ip": socket.gethostbyname(socket.gethostname()),
         "hostname": socket.gethostname()

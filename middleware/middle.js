@@ -65,8 +65,16 @@ app.get("/applications", async (req, res) => {
 	res.send(JSON.stringify(returnData));
 });
 
-app.get("/check-flatpack", async (req, res) => {
-	let requests = urls.map((url) => axios.get(url + "/check-flatpack"));
+app.get("/search-app", async (req, res) => {
+	let requests = urls.map((url) =>
+		axios.get({
+			method: "get",
+			url: url + "/search-app",
+			params: {
+				appName: req.data.appName,
+			},
+		})
+	);
 	let results = await Promise.allSettled(requests);
 	let returnData = [];
 	results.forEach((res) => {
