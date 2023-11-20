@@ -35,6 +35,9 @@ checkFlatpackButton.addEventListener("click", async () => {
 		method: "get",
 		url: "http://localhost:3000/check-flatpack",
 	});
+
+	output.innerHTML = "";
+	output.innerHTML = `<pre>${JSON.stringify(result.data, null, 2)}</pre>`;
 });
 
 function displayInfo(data) {

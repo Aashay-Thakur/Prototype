@@ -45,6 +45,16 @@ def checkFlatpack():
     data = data[0]
     return jsonify(data)
 
+@app.route('/install-flatpack', methods=['GET'])
+def installFlatpack():
+    password = "mca@123"
+    data = subprocess.check_output(['echo', password, '|', 'sudo', '-S', 'apt', 'install', 'flatpak', '-y'])
+    data = data.decode('utf-8')
+    data = data.split('\n')
+    data = data[0]
+    return jsonify(data)
+    
+
 @app.route('/applications', methods=['GET'])
 def applications():
     data = subprocess.check_output(['wmic', 'product', 'get', 'name'])
