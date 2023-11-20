@@ -11,17 +11,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const urls = [
-	"http://test.loca.lt",
-	// 	"https://nervous-insect-18.loca.lt",
-	// 	"https://angry-frog-22.loca.lt",
-	// 	"https://smart-husky-91.loca.lt",
+	"http://localhost:3001",
+	// "http://192.168.56.102:3001", // VM
+	// "http://test.loca.lt",	// ngrok
 ];
-
-// const urls = ["http://localhost:3001"];
 
 app.get("/info", async (req, res) => {
 	let requests = urls.map((url) => axios.get(url + "/info"));
-
 	let results = await Promise.allSettled(requests);
 	let returnData = [];
 	results.forEach((res) => {
@@ -65,24 +61,10 @@ app.get("/applications", async (req, res) => {
 	res.send(JSON.stringify(returnData));
 });
 
-app.get("/search-app", async (req, res) => {
-	let requests = urls.map((url) =>
-		axios.get({
-			method: "get",
-			url: url + "/search-app",
-			params: {
-				appName: req.data.appName,
-			},
-		})
-	);
-	let results = await Promise.allSettled(requests);
-	let returnData = [];
-	results.forEach((res) => {
-		returnData.push(res.value.data);
-	});
-	res.setHeader("Content-Type", "application/json");
-	res.send(JSON.stringify(returnData));
-});
+//? Should be used when testing with VM
+// app.listen(3000, "192.168.56.101", () => {
+// 	console.log("Listening on port 3000...");
+// });
 
 app.listen(3000, () => {
 	console.log("Listening on port 3000...");

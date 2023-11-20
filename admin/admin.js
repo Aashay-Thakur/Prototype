@@ -1,34 +1,24 @@
 const getInfoButton = document.querySelector(".getInfoButton");
 const shutdownButton = document.querySelector(".shutDownButton");
 const applicationsButton = document.querySelector(".showApplications");
-const checkFlatpackButton = document.querySelector(".checkFlatpack");
-const searchApp = document.querySelector(".searchApplication");
 
 const output = document.querySelector(".output");
+const url = "http://localhost:3000"; // Local
+// const url = "http://192.168.56.101:3000"; // VM
 
 getInfoButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
-		url: "http://localhost:3000/info",
+		url: url + "/info",
 	});
 	console.log(result);
 	displayInfo(result.data);
 });
 
-searchApp.addEventListener("click", async () => {
-	const result = await axios({
-		method: "get",
-		data: {
-			appName: "firefox",
-		},
-		url: "http://localhost:3000/search-app",
-	});
-});
-
 shutdownButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
-		url: "http://localhost:3000/shutdown",
+		url: url + "/shutdown",
 	});
 	displayInfo({ reply: result.data });
 });
@@ -36,17 +26,9 @@ shutdownButton.addEventListener("click", async () => {
 applicationsButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
-		url: "http://localhost:3000/applications",
+		url: url + "/applications",
 	});
 	displayInfo({ data: result.data });
-});
-
-checkFlatpackButton.addEventListener("click", async () => {
-	const result = await axios({
-		method: "get",
-		url: "http://localhost:3000/check-flatpak",
-	});
-	console.log(result);
 });
 
 function displayInfo(data) {

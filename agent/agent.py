@@ -63,3 +63,4 @@ def get_ip():
 
 if __name__ == '__main__':
     app.run(host='localhost', port=3001, debug=True)
+    # 192.168.56.102 for virtualbox
