@@ -1,11 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify
 import platform
 import psutil
-import subprocess
 import socket
-import os
-
-
 app = Flask(__name__)
 
 @app.route('/info', methods=['GET'])
@@ -28,7 +24,7 @@ def getInfo():
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     # os.system('shutdown /s') # for windows
-    os.system('shutdown -h now') # for linux
+    # os.system('shutdown -h now') # for linux
     ip = getIP()
     data = {
         "ip": ip['ip'],
@@ -37,21 +33,9 @@ def shutdown():
     }
     return jsonify(data)
 
-@app.route('/check-flatpack', methods=['GET'])
-def checkFlatpack():
-    data = subprocess.check_output(['flatpak', '--version'])
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[0]
-    return jsonify(data)
-
 @app.route('/applications', methods=['GET'])
 def applications():
-    data = subprocess.check_output(['wmic', 'product', 'get', 'name'])
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[1:-2]
-    return jsonify(data)
+    return 'List of applications'
 
 def getIP():
     return {
@@ -60,4 +44,4 @@ def getIP():
     }
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=3001, debug=True)
+    app.run(host='localhost', port=3002, debug=True)

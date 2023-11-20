@@ -1,6 +1,7 @@
 const getInfoButton = document.querySelector(".getInfoButton");
 const shutdownButton = document.querySelector(".shutDownButton");
 const applicationsButton = document.querySelector(".showApplications");
+const checkFlatpackButton = document.querySelector(".checkFlatpack");
 
 const output = document.querySelector(".output");
 
@@ -27,6 +28,13 @@ applicationsButton.addEventListener("click", async () => {
 		url: "http://localhost:3000/applications",
 	});
 	displayInfo({ data: result.data });
+});
+
+checkFlatpackButton.addEventListener("click", async () => {
+	const result = await axios({
+		method: "get",
+		url: "http://localhost:3000/check-flatpack",
+	});
 });
 
 function displayInfo(data) {

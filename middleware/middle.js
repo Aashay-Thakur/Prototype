@@ -10,7 +10,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const urls = ["http://localhost:3001", "http://localhost:3002"];
+// const urls = [
+// 	"http://test.loca.lt",
+// 	"https://nervous-insect-18.loca.lt",
+// 	"https://angry-frog-22.loca.lt",
+// 	"https://smart-husky-91.loca.lt",
+// ];
+
+const urls = ["http://localhost:3001"];
 
 app.get("/info", async (req, res) => {
 	let requests = urls.map((url) => axios.get(url + "/info"));
@@ -45,6 +52,21 @@ app.get("/shutdown", async (req, res) => {
 
 app.get("/applications", async (req, res) => {
 	let requests = urls.map((url) => axios.get(url + "/applications"));
+	let results = await Promise.allSettled(requests);
+	let returnData = [];
+	results.forEach((res) => {
+		if (res.status === "fulfilled") {
+			returnData.push(res.value.data);
+		} else {
+			returnData.push({ status: "failed", reason: res.reason.code, url: res.reason.config.url });
+		}
+	});
+	res.setHeader("Content-Type", "application/json");
+	res.send(JSON.stringify(returnData));
+});
+
+app.get("/check-flatpack", async (req, res) => {
+	let requests = urls.map((url) => axios.get(url + "/check-flatpack"));
 	let results = await Promise.allSettled(requests);
 	let returnData = [];
 	results.forEach((res) => {
