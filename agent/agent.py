@@ -57,11 +57,17 @@ def search_app():
 
 @app.route('/applications', methods=['GET'])
 def applications():
-    data = subprocess.check_output(['wmic', 'product', 'get', 'name'])
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[1:-2]
-    return jsonify(data)
+    app_name = "firefox"
+    data = subprocess.check_output(['apt', 'list', '--installed'])
+    data = data.decode('utf-8').splitlines()
+    for line in data:
+        columns = line.split()
+        if columns[0] == app_name:
+            return jsonify({
+                "name": columns[0],
+                "version": columns[1],
+                "description": columns[2]
+            })
 
 def get_ip():
     return {
