@@ -72,9 +72,11 @@ def applications():
         columns[0] = columns[0].split("/")[0]
         data = {
             "name": columns[0],
-            "version": columns[1] or "",
-            "description": columns[2] or "",
         }
+        if len(columns) > 1:
+            data["version"] = columns[1]
+        if len(columns) > 2:
+            data["description"] = columns[2]
         return_array.append(data)
     return jsonify(return_array)
 
