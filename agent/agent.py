@@ -58,17 +58,17 @@ def search_app():
 @app.route('/applications', methods=['GET'])
 def applications():
     app_name = "firefox"
-    data = subprocess.check_output(['apt', 'list', '--installed'])
-    data = data.decode('utf-8').splitlines()
-    for line in data:
+    output = subprocess.check_output(["apt", "list", "--installed"])
+    for line in output.decode("utf-8").splitlines():
         columns = line.split()
         if columns[0] == app_name:
-            return jsonify({
-                "name": columns[0],
+            app_details = {
+                "name": app_name,
                 "version": columns[1],
-                "description": columns[2]
-            })
-    return jsonify({"message": "Application not found"})
+                "description": columns[2],
+            }
+            return jsonify(app_details)
+    return None
 
 def get_ip():
     return {
