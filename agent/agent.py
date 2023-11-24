@@ -68,6 +68,7 @@ def applications():
                 "version": columns[1],
                 "description": columns[2]
             })
+    return jsonify({"message": "Application not found"})
 
 def get_ip():
     return {
