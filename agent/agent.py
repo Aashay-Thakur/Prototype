@@ -70,11 +70,12 @@ def applications():
     for line in output.decode("utf-8").splitlines():
         columns = line.split()
         columns[0] = columns[0].split("/")[0]
-        return_array.append({
+        data = {
             "name": columns[0],
-            "version": columns[1],
-            "description": columns[2],
-        })
+            "version": columns[1] or "",
+            "description": columns[2] or "",
+        }
+        return_array.append(data)
     return jsonify(return_array)
 
 def get_ip():
