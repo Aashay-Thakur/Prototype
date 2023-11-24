@@ -4,6 +4,7 @@ import psutil
 import subprocess
 import socket
 import os
+import re
 
 
 app = Flask(__name__)
@@ -47,20 +48,11 @@ def shutdown():
 
 @app.route('/search-app', methods=['GET'])
 def search_app():
-    app_name = request.args.get('name')
-    data = subprocess.check_output(['flatpack', 'search', app_name])
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[1:-2]
-    return jsonify(data)
-    
-
-@app.route('/applications', methods=['GET'])
-def applications():
     app_name = "firefox"
     output = subprocess.check_output(["apt", "list", "--installed"])
     for line in output.decode("utf-8").splitlines():
         columns = line.split()
+        columns[0] = columns[0].split("/")[0]
         if columns[0] == app_name:
             app_details = {
                 "name": app_name,
@@ -68,7 +60,22 @@ def applications():
                 "description": columns[2],
             }
             return jsonify(app_details)
-    return None
+    return {"response": "Application not found"}
+    
+
+@app.route('/applications', methods=['GET'])
+def applications():
+    output = subprocess.check_output(["apt", "list", "--installed"])
+    return_array = []
+    for line in output.decode("utf-8").splitlines():
+        columns = line.split()
+        columns[0] = columns[0].split("/")[0]
+        return_array.append({
+            "name": columns[0],
+            "version": columns[1],
+            "description": columns[2],
+        })
+    return jsonify(return_array)
 
 def get_ip():
     return {
