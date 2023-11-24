@@ -1,6 +1,7 @@
 const getInfoButton = document.querySelector(".getInfoButton");
 const shutdownButton = document.querySelector(".shutDownButton");
 const applicationsButton = document.querySelector(".showApplications");
+const showPeripherals = document.querySelector(".showPeripherals");
 
 const output = document.querySelector(".output");
 const url = "http://localhost:3000"; // Local
@@ -27,6 +28,14 @@ applicationsButton.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
 		url: url + "/applications",
+	});
+	displayInfo({ data: result.data });
+});
+
+showPeripherals.addEventListener("click", async () => {
+	const result = await axios({
+		method: "get",
+		url: url + "/peripherals",
 	});
 	displayInfo({ data: result.data });
 });

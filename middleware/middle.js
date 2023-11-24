@@ -11,9 +11,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const urls = [
-	"http://localhost:3001",
+	// "http://localhost:3001",
 	// "http://192.168.56.102:3001", // VM
-	// "http://test.loca.lt",	// ngrok
+	"http://test.loca.lt", // localtunnel
 ];
 
 app.get("/info", async (req, res) => {
@@ -48,6 +48,21 @@ app.get("/shutdown", async (req, res) => {
 
 app.get("/applications", async (req, res) => {
 	let requests = urls.map((url) => axios.get(url + "/applications"));
+	let results = await Promise.allSettled(requests);
+	let returnData = [];
+	results.forEach((res) => {
+		if (res.status === "fulfilled") {
+			returnData.push(res.value.data);
+		} else {
+			returnData.push({ status: "failed", reason: res.reason.code, url: res.reason.config.url });
+		}
+	});
+	res.setHeader("Content-Type", "application/json");
+	res.send(JSON.stringify(returnData));
+});
+
+app.get("/peripherals", async (req, res) => {
+	let requests = urls.map((url) => axios.get(url + "/peripherals"));
 	let results = await Promise.allSettled(requests);
 	let returnData = [];
 	results.forEach((res) => {

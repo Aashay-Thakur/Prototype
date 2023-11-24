@@ -25,6 +25,14 @@ def get_info():
     }
     return jsonify(data)
 
+@app.route('/peripherals', methods=['GET'])
+def get_peripherals():
+    data = subprocess.check_output("lsusb", shell=True)
+    data = data.decode('utf-8')
+    data = data.split('\n')
+    data = data[1:-2]
+    return jsonify(data)
+
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     # os.system('shutdown /s') # for windows
