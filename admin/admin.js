@@ -3,6 +3,9 @@ const shutdownButton = document.querySelector(".shutDownButton");
 const applicationsButton = document.querySelector(".showApplications");
 const showPeripherals = document.querySelector(".showPeripherals");
 
+const applicationName = document.getElementById("applicationName");
+const applicationSearch = document.querySelector(".searchApplication");
+
 const output = document.querySelector(".output");
 const url = "http://localhost:3000"; // Local
 // const url = "http://192.168.56.101:3000"; // VM
@@ -17,11 +20,13 @@ getInfoButton.addEventListener("click", async () => {
 });
 
 shutdownButton.addEventListener("click", async () => {
-	const result = await axios({
-		method: "get",
-		url: url + "/shutdown",
-	});
-	displayInfo({ reply: result.data });
+	if (confirm("Are you sure you want to shut down all pcs?")) {
+		const result = await axios({
+			method: "get",
+			url: url + "/shutdown",
+		});
+		displayInfo({ reply: result.data });
+	}
 });
 
 applicationsButton.addEventListener("click", async () => {
@@ -38,6 +43,14 @@ showPeripherals.addEventListener("click", async () => {
 		url: url + "/peripherals",
 	});
 	displayInfo({ data: result.data });
+});
+
+applicationSearch.addEventListener("click", async () => {
+	const result = await axios({
+		method: "get",
+		url: url + "/search",
+		data: { name: applicationName.value },
+	});
 });
 
 function displayInfo(data) {

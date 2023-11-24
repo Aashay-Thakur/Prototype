@@ -46,9 +46,9 @@ def shutdown():
     }
     return jsonify(data)
 
-@app.route('/search-app', methods=['GET'])
+@app.route('/search', methods=['GET'])
 def search_app():
-    app_name = "firefox"
+    app_name = request.args.get('name')
     output = subprocess.check_output(["apt", "list", "--installed"])
     for line in output.decode("utf-8").splitlines():
         columns = line.split()
@@ -67,7 +67,9 @@ def search_app():
 def applications():
     output = subprocess.check_output(["apt", "list", "--installed"])
     return_array = []
-    for line in output.decode("utf-8").splitlines():
+    output = output.decode("utf-8").splitlines()
+    output.pop(0)
+    for line in output:
         columns = line.split()
         columns[0] = columns[0].split("/")[0]
         data = {

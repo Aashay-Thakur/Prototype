@@ -76,6 +76,21 @@ app.get("/peripherals", async (req, res) => {
 	res.send(JSON.stringify(returnData));
 });
 
+app.get("/search", async (req, res) => {
+	let requests = urls.map((url) => axios.get(url + "/search", { data: { name: req.query.name } }));
+	let results = await Promise.allSettled(requests);
+	let returnData = [];
+	results.forEach((res) => {
+		if (res.status === "fulfilled") {
+			returnData.push(res.value.data);
+		} else {
+			returnData.push({ status: "failed", reason: res.reason.code, url: res.reason.config.url });
+		}
+	});
+	res.setHeader("Content-Type", "application/json");
+	res.send(JSON.stringify(returnData));
+});
+
 //? Should be used when testing with VM
 // app.listen(3000, "192.168.56.101", () => {
 // 	console.log("Listening on port 3000...");
