@@ -49,8 +49,10 @@ applicationSearch.addEventListener("click", async () => {
 	const result = await axios({
 		method: "get",
 		url: url + "/search",
-		data: { name: applicationName.value },
+
+		params: { name: applicationName.value },
 	});
+	displayInfo({ data: result.data });
 });
 
 function displayInfo(data) {

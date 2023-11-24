@@ -77,7 +77,7 @@ app.get("/peripherals", async (req, res) => {
 });
 
 app.get("/search", async (req, res) => {
-	let requests = urls.map((url) => axios.get(url + "/search", { data: { name: req.query.name } }));
+	let requests = urls.map((url) => axios.get(url + "/search", { params: { name: req.query.name } }));
 	let results = await Promise.allSettled(requests);
 	let returnData = [];
 	results.forEach((res) => {
