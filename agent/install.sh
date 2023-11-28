@@ -8,10 +8,10 @@ RESET='\033[0m'
 
 echo "---Checking for dependencies---"
 
-if command -v curl &>/dev/null; then
-    echo "curl is installed"
+if command -v wget &>/dev/null; then
+    echo "wget is installed"
 else
-    echo "curl is not installed"
+    echo "wget is not installed"
     echo "Please install curl"
     echo "Press any key to exit..."
     read -n 1 -s
