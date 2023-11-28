@@ -4,14 +4,15 @@ import psutil
 import subprocess
 import socket
 import os
-import re
-
+import time
 
 app = Flask(__name__)
+
 
 @app.route('/info', methods=['GET'])
 def get_info():
     data = {
+        "uptime": get_uptime(),
         "platform": platform.system(),
         "release": platform.release(),
         "type": platform.machine(),
@@ -28,6 +29,7 @@ def get_info():
 
 @app.route('/peripherals', methods=['GET'])
 def get_peripherals():
+    # return jsonify([{"keyboard": "connected", "mouse": "connected", "monitor": "connected"}])
     data = subprocess.check_output("lsusb", shell=True)
     data = data.decode('utf-8')
     data = data.split('\n')
@@ -36,6 +38,7 @@ def get_peripherals():
 
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
+    # return jsonify({"message": "PC shutting down..."})
     # os.system('shutdown /s') # for windows
     os.system('shutdown -h now') # for linux
     ip = get_ip()
@@ -61,10 +64,29 @@ def search_app():
             }
             return jsonify(app_details)
     return {"response": "Application not found"}
+
+@app.route('/installed_from_list', methods=['GET'])
+def installed_from_list():
+    # return jsonify([{"name": "Android", "version": "test", "description": "test"}, {"name": "Firefox", "version": "test", "description": "test"}])
+    app_list = request.data.decode("utf-8").split(",")  
+    output = subprocess.check_output(["apt", "list", "--installed"])
+    return_array = []
+    for line in output.decode("utf-8").splitlines():
+        columns = line.split()
+        columns[0] = columns[0].split("/")[0]
+        if columns[0] in app_list:
+            app_details = {
+                "name": columns[0],
+                "version": columns[1],
+                "description": columns[2],
+            }
+            return_array.append(app_details)
+    return jsonify(return_array)
     
 
 @app.route('/applications', methods=['GET'])
 def applications():
+    # return jsonify([{"name": "Android", "version": "test", "description": "test"}, {"name": "Firefox", "version": "test", "description": "test"}])
     output = subprocess.check_output(["apt", "list", "--installed"])
     return_array = []
     output = output.decode("utf-8").splitlines()
@@ -87,6 +109,9 @@ def get_ip():
         "ip": socket.gethostbyname(socket.gethostname()),
         "hostname": socket.gethostname()
     }
+
+def get_uptime():
+    return time.time() - psutil.boot_time()
 
 if __name__ == '__main__':
     app.run(host='localhost', port=3001, debug=True)
