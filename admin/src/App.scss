@@ -1,0 +1,12 @@
+@use "variables";
+
+body {
+	background-color: #1e1e1e;
+	color: var(--text-color) !important;
+}
+* {
+	border-color: var(--border) !important;
+}
+.container {
+	margin-top: 5rem;
+}

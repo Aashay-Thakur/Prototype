@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { PropTypes } from "prop-types";
 
+import "./Sidenav.scss";
+
 function Sidenav({ SocketContext }) {
 	const location = useLocation();
 	const socket = useContext(SocketContext);
@@ -13,13 +15,17 @@ function Sidenav({ SocketContext }) {
 	return (
 		<ul id="slide-out" className="sidenav">
 			<li className={location.pathname === "/" ? "active" : ""}>
-				<Link to="/">Dashboard</Link>
+				<Link className="link" to="/">
+					Dashboard
+				</Link>
 			</li>
 			<li className={location.pathname === "/applications" ? "active" : ""}>
-				<Link to="/applications">Applications</Link>
+				<Link className="link" to="/applications">
+					Applications
+				</Link>
 			</li>
 			<li onClick={sendShutdownSignal}>
-				<Link>Shutdown</Link>
+				<Link className="link">Shutdown</Link>
 			</li>
 		</ul>
 	);

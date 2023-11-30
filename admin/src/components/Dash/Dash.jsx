@@ -3,7 +3,6 @@ import { SocketContext } from "../SocketContext";
 import { useNavigate } from "react-router-dom";
 
 function Dash() {
-	console.log();
 	const socket = useContext(SocketContext);
 	const [info, setInfo] = useState([]);
 	const navigate = useNavigate();
@@ -16,18 +15,20 @@ function Dash() {
 		}
 	}, [socket]);
 
-	function populateTable() {
-		return info.map((item) => {
-			return (
-				<tr key={item.id} id={item.id} onClick={() => navigate(`/device/${item.id}`)}>
-					<td>{item.id}</td>
-					<td>{item.data.hostname}</td>
-					<td>{[item.data.platform, item.data.release].join(" ")}</td>
-					<td>{item.data.arch.join(" ")}</td>
-					<td>{item.data.type}</td>
-				</tr>
-			);
-		});
+	function populateInfo() {
+		if (info) {
+			return info.map((item) => {
+				return (
+					<tr key={item.id} id={item.id} onClick={() => navigate(`/device/${item.id}`)}>
+						<td>{item.id}</td>
+						<td>{item.data.hostname}</td>
+						<td>{[item.data.platform, item.data.release].join(" ")}</td>
+						<td>{item.data.arch.join(" ")}</td>
+						<td>{item.data.type}</td>
+					</tr>
+				);
+			});
+		}
 	}
 
 	return (
@@ -41,7 +42,7 @@ function Dash() {
 					<th>Type</th>
 				</tr>
 			</thead>
-			<tbody>{populateTable()}</tbody>
+			<tbody>{populateInfo()}</tbody>
 		</table>
 	);
 }
