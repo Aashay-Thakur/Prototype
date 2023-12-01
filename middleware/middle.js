@@ -25,7 +25,6 @@ const urls = [
 	// "http://localhost:3001",
 	// "http://192.168.56.102:3001", // VM
 	"https://test.loca.lt", // localtunnel
-	"https://ancient-snake-83.loca.lt", // localtunnel
 ];
 
 async function sendRequests(urls, config) {

@@ -9,7 +9,9 @@ function Sidenav({ SocketContext }) {
 	const socket = useContext(SocketContext);
 
 	function sendShutdownSignal() {
-		socket.emit("shutdown", null, (response) => console.log(response));
+		if (confirm("Are you sure you want to shutdown all devices?")) {
+			socket.emit("shutdown", null, (response) => console.log(response));
+		}
 	}
 
 	return (

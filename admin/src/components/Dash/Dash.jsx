@@ -11,22 +11,31 @@ function Dash() {
 		if (socket) {
 			socket.emit("info", null, (response) => {
 				setInfo(response);
+				console.log(response);
 			});
 		}
 	}, [socket]);
 
 	function populateInfo() {
 		if (info) {
-			return info.map((item) => {
-				return (
-					<tr key={item.id} id={item.id} onClick={() => navigate(`/device/${item.id}`)}>
-						<td>{item.id}</td>
-						<td>{item.data.hostname}</td>
-						<td>{[item.data.platform, item.data.release].join(" ")}</td>
-						<td>{item.data.arch.join(" ")}</td>
-						<td>{item.data.type}</td>
-					</tr>
-				);
+			return info.map((item, index) => {
+				if (item?.status === "failed") {
+					return (
+						<tr key={index}>
+							<td>Failed</td>
+						</tr>
+					);
+				} else {
+					return (
+						<tr key={item.id} id={item.id} onClick={() => navigate(`/device/${item.id}`)}>
+							<td>{item.id}</td>
+							<td>{item.data.hostname}</td>
+							<td>{[item.data.platform, item.data.release].join(" ")}</td>
+							<td>{item.data.arch.join(" ")}</td>
+							<td>{item.data.type}</td>
+						</tr>
+					);
+				}
 			});
 		}
 	}

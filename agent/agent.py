@@ -5,9 +5,13 @@ import subprocess
 import socket
 import os
 import time
+import requests
 
 app = Flask(__name__)
 
+def ping():
+    hostname = "https://test.loca.lt"
+    return requests.post(hostname)
 
 @app.route('/info', methods=['GET'])
 def get_info():
@@ -28,6 +32,7 @@ def get_info():
         "ip": ip['ip'],
     }
     return jsonify(data)
+
 
 @app.route('/peripherals', methods=['GET'])
 def get_peripherals():
