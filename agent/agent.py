@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 @app.route('/info', methods=['GET'])
 def get_info():
+    ip = get_ip()
     data = {
         "uptime": get_uptime(),
         "platform": platform.system(),
@@ -24,6 +25,7 @@ def get_info():
         "disk": psutil.disk_usage('/'),
         "network": psutil.net_io_counters(),
         "users": psutil.users(),
+        "ip": ip['ip'],
     }
     return jsonify(data)
 
@@ -52,6 +54,7 @@ def shutdown():
 @app.route('/search', methods=['GET'])
 def search_app():
     app_name = request.args.get('name')
+    # return jsonify({"name": app_name, "version": "test", "description": "test"})
     output = subprocess.check_output(["apt", "list", "--installed"])
     for line in output.decode("utf-8").splitlines():
         columns = line.split()

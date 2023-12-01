@@ -1,0 +1,15 @@
+@use "../../variables";
+
+.sidenav {
+	background-color: var(--bg2) !important;
+	.link {
+		color: var(--text-color);
+		&:hover {
+			// color: var(--accent1);
+			background-color: rgba(variables.$accent2, 0.1) !important;
+		}
+	}
+	li.active {
+		background-color: rgba(variables.$accent1, 0.5) !important;
+	}
+}

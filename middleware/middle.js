@@ -22,9 +22,10 @@ const io = new Server(server, {
 });
 
 const urls = [
-	"http://localhost:3001",
+	// "http://localhost:3001",
 	// "http://192.168.56.102:3001", // VM
-	// "http://test.loca.lt", // localtunnel
+	"https://test.loca.lt", // localtunnel
+	"https://ancient-snake-83.loca.lt", // localtunnel
 ];
 
 async function sendRequests(urls, config) {
@@ -88,11 +89,15 @@ adminIo.on("connection", (socket) => {
 		callback(data);
 	});
 
-	socket.on("all_data", async (id, callback) => {
+	socket.on("all_data", async (id, applications, callback) => {
 		const info = await sendRequests([urls[id]], { method: "get", type: "/info" });
-		const applications = await sendRequests([urls[id]], { method: "get", type: "/applications" });
+		const installed_apps = await sendRequests([urls[id]], {
+			method: "get",
+			type: "/installed_from_list",
+			data: applications.join(","),
+		});
 		const peripherals = await sendRequests([urls[id]], { method: "get", type: "/peripherals" });
-		const data = { info: info[0].data, applications: applications[0].data, peripherals: peripherals[0].data };
+		const data = { info: info[0].data, applications: installed_apps[0].data, peripherals: peripherals[0].data };
 		callback(data);
 	});
 });

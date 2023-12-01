@@ -2,8 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import { SocketContext } from "./components/SocketContext.jsx";
 
-import "./App.css";
 import M from "materialize-css";
+import "./App.scss";
 
 import { Components } from "./components/Components";
 
@@ -43,6 +43,7 @@ function App() {
 					<Route path="/" element={<Components.Dash />} />
 					<Route path="/applications" element={<Components.Applications />} />
 					<Route path="/device/:id" element={<Components.Device />} />
+					<Route path="*" element={<Components.Error code={404} />} />
 				</Routes>
 			</div>
 		</div>

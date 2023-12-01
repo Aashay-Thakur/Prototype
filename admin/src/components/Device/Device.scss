@@ -1,0 +1,30 @@
+@use "../../variables";
+
+.done {
+	color: var(--accent1);
+}
+
+.clear {
+	color: red;
+}
+.fix {
+	position: fixed;
+	li > a {
+		color: var(--text-color);
+		&.active {
+			color: var(--accent1);
+		}
+		&:hover {
+			color: var(--accent1);
+		}
+	}
+	.button-wrapper {
+		button {
+			margin-top: 5rem;
+			box-shadow: 2px 2px 5px 0px rgba(variables.$accent2, 0.8);
+		}
+		button:active {
+			scale: 0.9;
+		}
+	}
+}

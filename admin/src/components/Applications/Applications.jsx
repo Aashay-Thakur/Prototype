@@ -6,12 +6,13 @@ function Applications() {
 	const socket = useContext(SocketContext);
 	const [applications, setApplications] = useState([]);
 	const navigate = useNavigate();
-	const applicationList = ["Android", "Firefox", "Terminal"];
+	const applicationList = ["android-studio", "firefox", "terminal"];
 
 	useEffect(() => {
 		if (socket) {
 			socket.emit("installed_from_list", applicationList, null, (response) => {
 				setApplications(response);
+				console.log(response);
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

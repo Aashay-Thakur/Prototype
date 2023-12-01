@@ -1,0 +1,33 @@
+{
+	"info": {
+		"arch": ["64bit", "ELF"],
+		"cpus": "x86_64",
+		"disk": [9932427264, 8451375104, 954404864, 89.9],
+		"hostname": "Ubuntu",
+		"memory": [
+			4102135808, 2719006720, 33.7, 1079234560, 110698496, 1169039360, 2371526656, 69210112, 2842992640, 14508032,
+			322437120
+		],
+		"network": [5308119, 509945063, 60569, 360191, 0, 0, 0, 0],
+		"platform": "Linux",
+		"release": "5.15.0-89-generic",
+		"type": "x86_64",
+		"uptime": 5011.088051319122,
+		"users": [["thaashay", ":0", "localhost", 1701354439, 10229]],
+		"version": "#99~20.04.1-Ubuntu SMP Thu Nov 2 15:16:47 UTC 2023",
+		"ip": "192.168.56.1"
+	},
+	"applications": [
+		{
+			"description": "amd64",
+			"name": "firefox",
+			"version": "120.0+build2-0ubuntu0.20.04.1"
+		},
+		{
+			"description": "amd64",
+			"name": "gnome-terminal",
+			"version": "3.36.2-1ubuntu1~20.04"
+		}
+	],
+	"peripherals": ["Bus 002 Device 002: ID 80ee:0021 VirtualBox USB Tablet"]
+}
