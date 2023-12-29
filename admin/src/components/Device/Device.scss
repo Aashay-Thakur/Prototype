@@ -19,12 +19,36 @@
 		}
 	}
 	.button-wrapper {
+		display: flex;
 		button {
 			margin-top: 5rem;
 			box-shadow: 2px 2px 5px 0px rgba(variables.$accent2, 0.8);
+			&:nth-child(1) {
+				margin-right: 1rem;
+			}
 		}
 		button:active {
 			scale: 0.9;
 		}
+	}
+}
+
+.all_peripherals {
+	direction: rtl;
+	max-height: 50vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scroll-margin-right: 5rem;
+	&::-webkit-scrollbar {
+		width: 0.5rem;
+	}
+	&::-webkit-scrollbar-track {
+		background: variables.$bg2;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: variables.$accent2;
+	}
+	& > div {
+		margin-left: 0.5rem;
 	}
 }

@@ -22,9 +22,10 @@ const io = new Server(server, {
 });
 
 const urls = [
-	// "http://localhost:3001",
+	"http://172.18.36.181:3001", // LAN
+	// "http://localhost:3001", // local
 	// "http://192.168.56.102:3001", // VM
-	"https://test.loca.lt", // localtunnel
+	// "https://test.loca.lt", // localtunnel
 ];
 
 async function sendRequests(urls, config) {
@@ -33,6 +34,7 @@ async function sendRequests(urls, config) {
 		axios({
 			...config,
 			url: url + config.type,
+			port: 3001,
 		})
 	);
 	let results = await Promise.allSettled(requests);
@@ -50,8 +52,14 @@ const adminIo = io.of("/admin");
 
 adminIo.on("connection", (socket) => {
 	console.log("Admin Connected =>", socket.id);
+
 	socket.on("shutdown", async (id, callback) => {
 		const data = await sendRequests(id ? [urls[id]] : urls, { method: "get", type: "/shutdown" });
+		callback(data);
+	});
+
+	socket.on("reboot", async (id, callback) => {
+		const data = await sendRequests(id ? [urls[id]] : urls, { method: "get", type: "/reboot" });
 		callback(data);
 	});
 
@@ -79,7 +87,7 @@ adminIo.on("connection", (socket) => {
 		callback(data);
 	});
 
-	socket.on("installed_from_list", async (applications, id, callback) => {
+	socket.on("installed-from-list", async (applications, id, callback) => {
 		const data = await sendRequests(id ? [urls[id]] : urls, {
 			method: "get",
 			type: "/installed_from_list",
@@ -88,7 +96,7 @@ adminIo.on("connection", (socket) => {
 		callback(data);
 	});
 
-	socket.on("all_data", async (id, applications, callback) => {
+	socket.on("all-data", async (id, applications, callback) => {
 		const info = await sendRequests([urls[id]], { method: "get", type: "/info" });
 		const installed_apps = await sendRequests([urls[id]], {
 			method: "get",
@@ -106,6 +114,10 @@ adminIo.on("connection", (socket) => {
 // 	console.log("Listening on port 3000...");
 // });
 
-server.listen(3000, () => {
+server.listen(3000, "172.18.36.201", () => {
 	console.log("Listening on port 3000...");
 });
+
+// server.listen(3000, "172.18.36.201", () => {
+// 	console.log("Listening on port 3000...");
+// });

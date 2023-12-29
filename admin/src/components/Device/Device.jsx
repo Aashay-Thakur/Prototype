@@ -19,10 +19,11 @@ function Device() {
 
 	useEffect(() => {
 		if (socket) {
-			socket.emit("all_data", id, appList, (response) => {
+			socket.emit("all-data", id, appList, (response) => {
 				setInfo(response);
 			});
 		}
+		//eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [socket, id]);
 
 	function isInstalled(name) {
@@ -49,12 +50,26 @@ function Device() {
 		}
 	}
 
+	function onSendReboot() {
+		if (socket) {
+			if (confirm("Are you sure you want to reboot this device?")) {
+				socket.emit("reboot", id, (response) => {
+					console.log(response);
+				});
+			}
+		}
+	}
+
 	function isConnected(name) {
 		if (info.peripherals) {
 			let icon = "clear";
 			info.peripherals.forEach((peripheral) => {
-				if (peripheral.toLowerCase().match(name.toLowerCase())) {
+				if (name === "Webcam" && peripheral.toLowerCase().match("camera")) {
 					icon = "done";
+				} else {
+					if (peripheral.toLowerCase().match(name.toLowerCase())) {
+						icon = "done";
+					}
 				}
 			});
 			return <i className={`material-icons ${icon}`}>{icon}</i>;
@@ -159,20 +174,24 @@ function Device() {
 						</div>
 						<div className="section scrollspy" id="peripherals">
 							<div className="row">
-								<div className="col s12 m6 l6">
+								<div className="col s12 m6 l6 ">
 									<h3>All Peripherals</h3>
-									<table>
-										<tbody>
-											{info.peripherals &&
-												info.peripherals.map((peripheral) => {
-													return (
-														<tr key={peripheral}>
-															<td>{peripheral}</td>
-														</tr>
-													);
-												})}
-										</tbody>
-									</table>
+									<div className="all_peripherals">
+										<div>
+											<table>
+												<tbody>
+													{info.peripherals &&
+														info.peripherals.map((peripheral) => {
+															return (
+																<tr key={peripheral}>
+																	<td>{peripheral}</td>
+																</tr>
+															);
+														})}
+												</tbody>
+											</table>
+										</div>
+									</div>
 								</div>
 								<div className="col s12 m6 l6">
 									<h3>Connected</h3>
@@ -221,6 +240,13 @@ function Device() {
 										name="action"
 										onClick={onSendShutdown}>
 										Shutdown
+									</button>
+									<button
+										className="waves-effect waves-light btn"
+										type="submit"
+										name="action"
+										onClick={onSendReboot}>
+										Reboot
 									</button>
 								</div>
 							</ul>

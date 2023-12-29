@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { SocketContext } from "./components/SocketContext.jsx";
 
 import M from "materialize-css";
+
 import "./App.scss";
 
 import { Components } from "./components/Components";
@@ -51,4 +52,3 @@ function App() {
 }
 
 export default App;
-

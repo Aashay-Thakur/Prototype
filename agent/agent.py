@@ -5,13 +5,9 @@ import subprocess
 import socket
 import os
 import time
-import requests
 
 app = Flask(__name__)
 
-def ping():
-    hostname = "https://test.loca.lt"
-    return requests.post(hostname)
 
 @app.route('/info', methods=['GET'])
 def get_info():
@@ -36,25 +32,63 @@ def get_info():
 
 @app.route('/peripherals', methods=['GET'])
 def get_peripherals():
-    # return jsonify([{"keyboard": "connected", "mouse": "connected", "monitor": "connected"}])
-    data = subprocess.check_output("lsusb", shell=True)
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[1:-2]
-    return jsonify(data)
+    if (platform.system() == "Linux"):
+        data = subprocess.check_output("lsusb", shell=True)
+        data = data.decode('utf-8')
+        data = data.split('\n')
+        data = data[1:-2]
+        return jsonify(data)
+    elif (platform.system() == "Windows"):
+        data = subprocess.check_output("wmic path Win32_PnPEntity get caption", shell=True)
+        data = data.decode('utf-8')
+        data = data.split('\n')
+        data = data[1:-2]
+        return jsonify(data)
+        
 
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     # return jsonify({"message": "PC shutting down..."})
-    # os.system('shutdown /s') # for windows
-    os.system('shutdown -h now') # for linux
-    ip = get_ip()
-    data = {
-        "ip": ip['ip'],
-        "hostname": ip['hostname'],
-        "message": "PC shutting down..."
-    }
-    return jsonify(data)
+    if (platform.system() == "Linux"):
+        os.system('shutdown -h now') # for linux
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC shutting down..."
+        }
+        return jsonify(data)
+    elif (platform.system() == "Windows"):
+        os.system('shutdown /s /t 1')
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC shutting down..."
+        }
+        return jsonify(data)
+    
+@app.route('/reboot', methods=['GET'])
+def reboot():
+    # return jsonify({"message": "PC rebooting..."})
+    if (platform.system() == "Linux"):
+        os.system('shutdown -r now')
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC rebooting..."
+        }
+        return jsonify(data)
+    elif (platform.system() == "Windows"):
+        os.system('shutdown /r /t 1')
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC rebooting..."
+        }
+        return jsonify(data)
 
 @app.route('/search', methods=['GET'])
 def search_app():
@@ -95,6 +129,7 @@ def installed_from_list():
 @app.route('/applications', methods=['GET'])
 def applications():
     # return jsonify([{"name": "Android", "version": "test", "description": "test"}, {"name": "Firefox", "version": "test", "description": "test"}])
+    #! Find an alternative to this, unstable
     output = subprocess.check_output(["apt", "list", "--installed"])
     return_array = []
     output = output.decode("utf-8").splitlines()
