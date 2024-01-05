@@ -5,6 +5,7 @@ import subprocess
 import socket
 import os
 import time
+import re
 
 app = Flask(__name__)
 
@@ -110,7 +111,12 @@ def search_app():
 @app.route('/installed_from_list', methods=['GET'])
 def installed_from_list():
     # return jsonify([{"name": "Android", "version": "test", "description": "test"}, {"name": "Firefox", "version": "test", "description": "test"}])
-    app_list = request.data.decode("utf-8").split(",")  
+    app_list = request.data.decode("utf-8").split(",")
+    # regex_list = []
+    for i in range(len(app_list)):
+        # regex = re.compile(app.strip().replace(" ", ".").lower(), flags=re.IGNORECASE)
+        # regex_list.append(regex)
+        app_list[i] = app_list[i].strip().replace(" ", "-").lower()
     output = subprocess.check_output(["apt", "list", "--installed"])
     return_array = []
     for line in output.decode("utf-8").splitlines():
