@@ -158,7 +158,7 @@ def get_ip():
     if (platform.system() == "Windows"):
         output = subprocess.check_output(["ip a"], shell=True)
     elif (platform.system() == "Linux"):
-        output = subprocess.check_output(["ifconfig"], shell=True)
+        output = subprocess.check_output(["ifconfig"])
     regex = re.compile("(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", flags=re.MULTILINE)
     ip = regex.findall(output.decode("utf-8"))
     return {
