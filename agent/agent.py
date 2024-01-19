@@ -94,6 +94,7 @@ def reboot():
 @app.route('/search', methods=['GET'])
 def search_app():
     app_name = request.args.get('name')
+    app_name = app_name.strip().replace(" ", "-").lower()
     # return jsonify({"name": app_name, "version": "test", "description": "test"})
     output = subprocess.check_output(["apt", "list", "--installed"])
     for line in output.decode("utf-8").splitlines():
@@ -154,14 +155,31 @@ def applications():
     return jsonify(return_array)
 
 def get_ip():
+    if (platform.system() == "Windows"):
+        output = subprocess.check_output(["ipconfig"])
+    elif (platform.system() == "Linux"):
+        output = subprocess.check_output(["ifconfig"])
+    regex = re.compile("(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", flags=re.MULTILINE)
+    ip = regex.findall(output.decode("utf-8"))
     return {
-        "ip": socket.gethostbyname(socket.gethostname()),
+        "ip": ip,
         "hostname": socket.gethostname()
     }
+
+    # return {
+    #     "ip": socket.gethostbyname(socket.gethostname()),
+    #     "hostname": socket.gethostname()
+    # }
 
 def get_uptime():
     return time.time() - psutil.boot_time()
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=3001, debug=True)
+    ip_list = get_ip()['ip']
+    regex = re.compile("(172\.18\.36\.\d{1,3})")
+    for ip in ip_list:
+        if regex.findall(ip):
+            if ip.split(".")[-1] != "1":
+                host = ip        
+    app.run(host, port=3001, debug=True)
     # 192.168.56.102 for virtualbox

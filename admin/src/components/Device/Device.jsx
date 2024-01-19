@@ -11,7 +11,7 @@ function Device() {
 	const { id } = useParams();
 	const socket = useContext(SocketContext);
 	const [info, setInfo] = useState([]);
-	const appList = ["android-studio", "firefox", "gnome-terminal"];
+	const appList = ["Android Studio", "Firefox", "Gnome Terminal", "Media Player Info"];
 
 	useEffect(() => {
 		M.ScrollSpy.init(document.querySelectorAll(".scrollspy"), {});
@@ -21,6 +21,7 @@ function Device() {
 		if (socket) {
 			socket.emit("all-data", id, appList, (response) => {
 				setInfo(response);
+				console.log(response);
 			});
 		}
 		//eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,6 +108,7 @@ function Device() {
 							<br />
 							<span>Type: {info.info?.type}</span>
 							<br />
+							{/* <span>IP: {info.info?.ip.join(", ")}</span> */}
 							<span>IP: {info.info?.ip}</span>
 							<br />
 							<span>Version: {info.info?.version}</span>
