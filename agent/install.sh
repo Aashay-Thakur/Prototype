@@ -87,7 +87,7 @@ fi
 # else
 #     echo "package.json does not exist"
 #     echo "Downloading package.json"
-#     wget -O package.json https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/package.json
+#     wget -O package.json https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/package.json
 # fi
 
 # if [ $? -eq 0 ]; then
@@ -140,7 +140,7 @@ else
 fi
 
 echo "Downloading requirements.txt"
-wget -O requirements.txt https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/requirements.txt
+wget -O requirements.txt https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/requirements.txt
 
 if [ $? -eq 0  ]; then
     echo "requirements.txt downloaded successfully"
@@ -185,7 +185,7 @@ fi
 pip install -r requirements.txt
 
 echo "Downloading agent.py"
-wget -O agent.py https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/agent.py
+wget -O agent.py https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/agent.py
 
 if [ $? -eq 0 ]; then
     echo "Downloaded agent.py successfully"
