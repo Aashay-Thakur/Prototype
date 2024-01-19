@@ -6,6 +6,7 @@ import socket
 import os
 import time
 import re
+from uuid import getnode
 
 app = Flask(__name__)
 
@@ -27,9 +28,9 @@ def get_info():
         "network": psutil.net_io_counters(),
         "users": psutil.users(),
         "ip": ip['ip'],
+        "mac": get_all_mac(),
     }
     return jsonify(data)
-
 
 @app.route('/peripherals', methods=['GET'])
 def get_peripherals():
@@ -45,7 +46,6 @@ def get_peripherals():
         data = data.split('\n')
         data = data[1:-2]
         return jsonify(data)
-        
 
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
@@ -159,27 +159,31 @@ def get_ip():
         output = subprocess.check_output(["ipconfig"])
     elif (platform.system() == "Linux"):
         output = subprocess.check_output(["ip a"], shell=True)
-    regex = re.compile("(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", flags=re.MULTILINE)
+    regex = re.compile(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", flags=re.MULTILINE)
     ip = regex.findall(output.decode("utf-8"))
     return {
         "ip": ip,
         "hostname": socket.gethostname()
     }
 
-    # return {
-    #     "ip": socket.gethostbyname(socket.gethostname()),
-    #     "hostname": socket.gethostname()
-    # }
-
 def get_uptime():
     return time.time() - psutil.boot_time()
 
+
+def get_all_mac():
+    mac_addresses = {}
+    for interface, addrs in psutil.net_if_addrs().items():
+        for addr in addrs:
+            if addr.family == psutil.AF_LINK:
+                mac_addresses[interface] = addr.address
+    return mac_addresses
+
 if __name__ == '__main__':
     ip_list = get_ip()['ip']
-    regex = re.compile("(172\.18\.36\.\d{1,3})")
+    regex = re.compile(r"(172\.18\.36\.\d{1,3})")
     for ip in ip_list:
         if regex.findall(ip):
-            if ip.split(".")[-1] != "1":
-                host = ip        
-    app.run(host, port=3001, debug=True)
+            if ip.split(".")[-1] != "1" and ip.split(".")[-1] != "255":
+                host = ip or "localhost"
+    app.run("localhost", port=3001, debug=True)
     # 192.168.56.102 for virtualbox

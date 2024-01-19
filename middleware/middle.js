@@ -23,7 +23,8 @@ const io = new Server(server, {
 
 const urls = [
 	"http://172.18.36.181:3001", // LAN
-	// "http://localhost:3001", // local
+	"http://172.18.36.229:3001", // LAN
+	"http://localhost:3001", // local
 	// "http://192.168.56.102:3001", // VM
 	// "https://test.loca.lt", // localtunnel
 ];
@@ -35,6 +36,7 @@ async function sendRequests(urls, config) {
 			...config,
 			url: url + config.type,
 			port: 3001,
+			timeout: 3000,
 		})
 	);
 	let results = await Promise.allSettled(requests);

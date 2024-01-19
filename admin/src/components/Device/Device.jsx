@@ -108,8 +108,26 @@ function Device() {
 							<br />
 							<span>Type: {info.info?.type}</span>
 							<br />
-							{/* <span>IP: {info.info?.ip.join(", ")}</span> */}
-							<span>IP: {info.info?.ip}</span>
+							<span>
+								<br />
+								IP:
+								<ul>
+									{info.info?.ip.map((ip) => {
+										return <li key={ip}>{ip}</li>;
+									})}
+								</ul>
+							</span>
+							{/* <span>IP: {info.info?.ip}</span> */}
+							<br />
+							<span>
+								Mac:{" "}
+								<ul>
+									{info.info?.mac &&
+										Object.keys(info.info?.mac).map((key, index) => {
+											return <li key={index}>{`${key}:\t\t${info.info?.mac[key]}`}</li>;
+										})}
+								</ul>
+							</span>
 							<br />
 							<span>Version: {info.info?.version}</span>
 							<br />
@@ -119,8 +137,8 @@ function Device() {
 						<div id="users" className="section scrollspy">
 							<h3>Users:</h3>
 							<ol>
-								{info.info?.users.map((user) => {
-									return <li key={user}>{user[0]} </li>;
+								{info.info?.users.map((user, index) => {
+									return <li key={index}>{user[index]} </li>;
 								})}
 							</ol>
 						</div>
@@ -142,9 +160,9 @@ function Device() {
 									"slab",
 								].map((key, index) => {
 									if (key === "percent") {
-										return <li key={key}>{`${key}: ${info.info?.memory[index]}%`}</li>;
+										return <li key={index}>{`${key}: ${info.info?.memory[index]}%`}</li>;
 									}
-									return <li key={key}>{`${key}: ${formatBytes(info.info?.memory[index])}`}</li>;
+									return <li key={index}>{`${key}: ${formatBytes(info.info?.memory[index])}`}</li>;
 								})}
 							</ol>
 						</div>
@@ -153,9 +171,9 @@ function Device() {
 							<ol>
 								{["total", "used", "free", "percent"].map((key, index) => {
 									if (key === "percent") {
-										return <li key={key}>{`${key}: ${info.info?.disk[index]}%`}</li>;
+										return <li key={index}>{`${key}: ${info.info?.disk[index]}%`}</li>;
 									}
-									return <li key={key}>{`${key}: ${formatBytes(info.info?.disk[index])}`}</li>;
+									return <li key={index}>{`${key}: ${formatBytes(info.info?.disk[index])}`}</li>;
 								})}
 							</ol>
 						</div>
@@ -163,9 +181,9 @@ function Device() {
 							<h3>Applications</h3>
 							<table>
 								<tbody>
-									{appList.map((app) => {
+									{appList.map((app, index) => {
 										return (
-											<tr key={app}>
+											<tr key={index}>
 												<td>{app}</td>
 												<td>{info.applications && isInstalled(app)}</td>
 											</tr>
@@ -183,9 +201,9 @@ function Device() {
 											<table>
 												<tbody>
 													{info.peripherals &&
-														info.peripherals.map((peripheral) => {
+														info.peripherals.map((peripheral, index) => {
 															return (
-																<tr key={peripheral}>
+																<tr key={index}>
 																	<td>{peripheral}</td>
 																</tr>
 															);
@@ -199,9 +217,9 @@ function Device() {
 									<h3>Connected</h3>
 									<table>
 										<tbody>
-											{["Keyboard", "Mouse", "Webcam"].map((peripheral) => {
+											{["Keyboard", "Mouse", "Webcam"].map((peripheral, index) => {
 												return (
-													<tr key={peripheral}>
+													<tr key={index}>
 														<td>{peripheral}</td>
 														<td>{isConnected(peripheral)}</td>
 													</tr>
