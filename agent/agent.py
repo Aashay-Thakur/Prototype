@@ -161,6 +161,8 @@ def get_ip():
         output = subprocess.check_output(["ip a"], shell=True)
     regex = re.compile(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", flags=re.MULTILINE)
     ip = regex.findall(output.decode("utf-8"))
+    # remove all subnets and gateway
+    ip = [x for x in ip if not x.endswith("255") and not x.startswith("255") and not x.endswith(".1")]
     return {
         "ip": ip,
         "hostname": socket.gethostname()
@@ -175,7 +177,7 @@ def get_all_mac():
     for interface, addrs in psutil.net_if_addrs().items():
         for addr in addrs:
             if addr.family == psutil.AF_LINK:
-                mac_addresses[interface] = addr.address
+                mac_addresses[interface] = addr.address.upper().replace("-", ":")
     return mac_addresses
 
 if __name__ == '__main__':
