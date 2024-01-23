@@ -197,6 +197,7 @@ else
     # exit
 fi
 
+apt install dbus-x11
 echo "---Installation complete---"
 # echo "Starting a localtunnel session in a new window"
 # sudo -u mca gnome-terminal -- bash -c "npx lt -s test -p 3001; exec bash -i"
