@@ -11,7 +11,7 @@ function Device() {
 	const { id } = useParams();
 	const socket = useContext(SocketContext);
 	const [info, setInfo] = useState([]);
-	const appList = ["android-studio", "firefox", "gnome-terminal"];
+	const appList = ["Android Studio", "Firefox", "Gnome Terminal", "Media Player Info"];
 
 	useEffect(() => {
 		M.ScrollSpy.init(document.querySelectorAll(".scrollspy"), {});
@@ -19,10 +19,12 @@ function Device() {
 
 	useEffect(() => {
 		if (socket) {
-			socket.emit("all_data", id, appList, (response) => {
+			socket.emit("all-data", id, appList, (response) => {
 				setInfo(response);
+				console.log(response);
 			});
 		}
+		//eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [socket, id]);
 
 	function isInstalled(name) {
@@ -49,12 +51,26 @@ function Device() {
 		}
 	}
 
+	function onSendReboot() {
+		if (socket) {
+			if (confirm("Are you sure you want to reboot this device?")) {
+				socket.emit("reboot", id, (response) => {
+					console.log(response);
+				});
+			}
+		}
+	}
+
 	function isConnected(name) {
 		if (info.peripherals) {
 			let icon = "clear";
 			info.peripherals.forEach((peripheral) => {
-				if (peripheral.toLowerCase().match(name.toLowerCase())) {
+				if (name === "Webcam" && peripheral.toLowerCase().match("camera")) {
 					icon = "done";
+				} else {
+					if (peripheral.toLowerCase().match(name.toLowerCase())) {
+						icon = "done";
+					}
 				}
 			});
 			return <i className={`material-icons ${icon}`}>{icon}</i>;
@@ -92,7 +108,26 @@ function Device() {
 							<br />
 							<span>Type: {info.info?.type}</span>
 							<br />
-							<span>IP: {info.info?.ip}</span>
+							<span>
+								<br />
+								IP:
+								<ul>
+									{info.info?.ip.map((ip) => {
+										return <li key={ip}>{ip}</li>;
+									})}
+								</ul>
+							</span>
+							{/* <span>IP: {info.info?.ip}</span> */}
+							<br />
+							<span>
+								Mac:{" "}
+								<ul>
+									{info.info?.mac &&
+										Object.keys(info.info?.mac).map((key, index) => {
+											return <li key={index}>{`${key}:\t\t${info.info?.mac[key]}`}</li>;
+										})}
+								</ul>
+							</span>
 							<br />
 							<span>Version: {info.info?.version}</span>
 							<br />
@@ -102,8 +137,8 @@ function Device() {
 						<div id="users" className="section scrollspy">
 							<h3>Users:</h3>
 							<ol>
-								{info.info?.users.map((user) => {
-									return <li key={user}>{user[0]} </li>;
+								{info.info?.users.map((user, index) => {
+									return <li key={index}>{user[index]} </li>;
 								})}
 							</ol>
 						</div>
@@ -125,9 +160,9 @@ function Device() {
 									"slab",
 								].map((key, index) => {
 									if (key === "percent") {
-										return <li key={key}>{`${key}: ${info.info?.memory[index]}%`}</li>;
+										return <li key={index}>{`${key}: ${info.info?.memory[index]}%`}</li>;
 									}
-									return <li key={key}>{`${key}: ${formatBytes(info.info?.memory[index])}`}</li>;
+									return <li key={index}>{`${key}: ${formatBytes(info.info?.memory[index])}`}</li>;
 								})}
 							</ol>
 						</div>
@@ -136,9 +171,9 @@ function Device() {
 							<ol>
 								{["total", "used", "free", "percent"].map((key, index) => {
 									if (key === "percent") {
-										return <li key={key}>{`${key}: ${info.info?.disk[index]}%`}</li>;
+										return <li key={index}>{`${key}: ${info.info?.disk[index]}%`}</li>;
 									}
-									return <li key={key}>{`${key}: ${formatBytes(info.info?.disk[index])}`}</li>;
+									return <li key={index}>{`${key}: ${formatBytes(info.info?.disk[index])}`}</li>;
 								})}
 							</ol>
 						</div>
@@ -146,9 +181,9 @@ function Device() {
 							<h3>Applications</h3>
 							<table>
 								<tbody>
-									{appList.map((app) => {
+									{appList.map((app, index) => {
 										return (
-											<tr key={app}>
+											<tr key={index}>
 												<td>{app}</td>
 												<td>{info.applications && isInstalled(app)}</td>
 											</tr>
@@ -159,28 +194,32 @@ function Device() {
 						</div>
 						<div className="section scrollspy" id="peripherals">
 							<div className="row">
-								<div className="col s12 m6 l6">
+								<div className="col s12 m6 l6 ">
 									<h3>All Peripherals</h3>
-									<table>
-										<tbody>
-											{info.peripherals &&
-												info.peripherals.map((peripheral) => {
-													return (
-														<tr key={peripheral}>
-															<td>{peripheral}</td>
-														</tr>
-													);
-												})}
-										</tbody>
-									</table>
+									<div className="all_peripherals">
+										<div>
+											<table>
+												<tbody>
+													{info.peripherals &&
+														info.peripherals.map((peripheral, index) => {
+															return (
+																<tr key={index}>
+																	<td>{peripheral}</td>
+																</tr>
+															);
+														})}
+												</tbody>
+											</table>
+										</div>
+									</div>
 								</div>
 								<div className="col s12 m6 l6">
 									<h3>Connected</h3>
 									<table>
 										<tbody>
-											{["Keyboard", "Mouse", "Webcam"].map((peripheral) => {
+											{["Keyboard", "Mouse", "Webcam"].map((peripheral, index) => {
 												return (
-													<tr key={peripheral}>
+													<tr key={index}>
 														<td>{peripheral}</td>
 														<td>{isConnected(peripheral)}</td>
 													</tr>
@@ -221,6 +260,13 @@ function Device() {
 										name="action"
 										onClick={onSendShutdown}>
 										Shutdown
+									</button>
+									<button
+										className="waves-effect waves-light btn"
+										type="submit"
+										name="action"
+										onClick={onSendReboot}>
+										Reboot
 									</button>
 								</div>
 							</ul>

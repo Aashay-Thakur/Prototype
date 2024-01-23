@@ -5,6 +5,8 @@ import subprocess
 import socket
 import os
 import time
+import re
+from uuid import getnode
 
 app = Flask(__name__)
 
@@ -26,34 +28,73 @@ def get_info():
         "network": psutil.net_io_counters(),
         "users": psutil.users(),
         "ip": ip['ip'],
+        "mac": get_all_mac(),
     }
     return jsonify(data)
 
 @app.route('/peripherals', methods=['GET'])
 def get_peripherals():
-    # return jsonify([{"keyboard": "connected", "mouse": "connected", "monitor": "connected"}])
-    data = subprocess.check_output("lsusb", shell=True)
-    data = data.decode('utf-8')
-    data = data.split('\n')
-    data = data[1:-2]
-    return jsonify(data)
+    if (platform.system() == "Linux"):
+        data = subprocess.check_output("lsusb", shell=True)
+        data = data.decode('utf-8')
+        data = data.split('\n')
+        data = data[1:-2]
+        return jsonify(data)
+    elif (platform.system() == "Windows"):
+        data = subprocess.check_output("wmic path Win32_PnPEntity get caption", shell=True)
+        data = data.decode('utf-8')
+        data = data.split('\n')
+        data = data[1:-2]
+        return jsonify(data)
 
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     # return jsonify({"message": "PC shutting down..."})
-    # os.system('shutdown /s') # for windows
-    os.system('shutdown -h now') # for linux
-    ip = get_ip()
-    data = {
-        "ip": ip['ip'],
-        "hostname": ip['hostname'],
-        "message": "PC shutting down..."
-    }
-    return jsonify(data)
+    if (platform.system() == "Linux"):
+        os.system('shutdown -h now') # for linux
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC shutting down..."
+        }
+        return jsonify(data)
+    elif (platform.system() == "Windows"):
+        os.system('shutdown /s /t 1')
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC shutting down..."
+        }
+        return jsonify(data)
+    
+@app.route('/reboot', methods=['GET'])
+def reboot():
+    # return jsonify({"message": "PC rebooting..."})
+    if (platform.system() == "Linux"):
+        os.system('shutdown -r now')
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC rebooting..."
+        }
+        return jsonify(data)
+    elif (platform.system() == "Windows"):
+        os.system('shutdown /r /t 1')
+        ip = get_ip()
+        data = {
+            "ip": ip['ip'],
+            "hostname": ip['hostname'],
+            "message": "PC rebooting..."
+        }
+        return jsonify(data)
 
 @app.route('/search', methods=['GET'])
 def search_app():
     app_name = request.args.get('name')
+    app_name = app_name.strip().replace(" ", "-").lower()
     # return jsonify({"name": app_name, "version": "test", "description": "test"})
     output = subprocess.check_output(["apt", "list", "--installed"])
     for line in output.decode("utf-8").splitlines():
@@ -71,7 +112,12 @@ def search_app():
 @app.route('/installed_from_list', methods=['GET'])
 def installed_from_list():
     # return jsonify([{"name": "Android", "version": "test", "description": "test"}, {"name": "Firefox", "version": "test", "description": "test"}])
-    app_list = request.data.decode("utf-8").split(",")  
+    app_list = request.data.decode("utf-8").split(",")
+    # regex_list = []
+    for i in range(len(app_list)):
+        # regex = re.compile(app.strip().replace(" ", ".").lower(), flags=re.IGNORECASE)
+        # regex_list.append(regex)
+        app_list[i] = app_list[i].strip().replace(" ", "-").lower()
     output = subprocess.check_output(["apt", "list", "--installed"])
     return_array = []
     for line in output.decode("utf-8").splitlines():
@@ -90,6 +136,7 @@ def installed_from_list():
 @app.route('/applications', methods=['GET'])
 def applications():
     # return jsonify([{"name": "Android", "version": "test", "description": "test"}, {"name": "Firefox", "version": "test", "description": "test"}])
+    #! Find an alternative to this, unstable
     output = subprocess.check_output(["apt", "list", "--installed"])
     return_array = []
     output = output.decode("utf-8").splitlines()
@@ -108,14 +155,37 @@ def applications():
     return jsonify(return_array)
 
 def get_ip():
+    if (platform.system() == "Windows"):
+        output = subprocess.check_output(["ipconfig"])
+    elif (platform.system() == "Linux"):
+        output = subprocess.check_output(["ip a"], shell=True)
+    regex = re.compile(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", flags=re.MULTILINE)
+    ip = regex.findall(output.decode("utf-8"))
+    # remove all subnets and gateway
+    ip = [x for x in ip if not x.endswith("255") and not x.startswith("255") and not x.endswith(".1")]
     return {
-        "ip": socket.gethostbyname(socket.gethostname()),
+        "ip": ip,
         "hostname": socket.gethostname()
     }
 
 def get_uptime():
     return time.time() - psutil.boot_time()
 
+
+def get_all_mac():
+    mac_addresses = {}
+    for interface, addrs in psutil.net_if_addrs().items():
+        for addr in addrs:
+            if addr.family == psutil.AF_LINK:
+                mac_addresses[interface] = addr.address.upper().replace("-", ":")
+    return mac_addresses
+
 if __name__ == '__main__':
-    app.run(host='localhost', port=3001, debug=True)
+    ip_list = get_ip()['ip']
+    regex = re.compile(r"(172\.18\.36\.\d{1,3})")
+    for ip in ip_list:
+        if regex.findall(ip):
+            if ip.split(".")[-1] != "1" and ip.split(".")[-1] != "255":
+                host = ip or "localhost"
+    app.run("localhost", port=3001, debug=True)
     # 192.168.56.102 for virtualbox

@@ -21,12 +21,16 @@ const io = new Server(server, {
 	},
 });
 
-const urls = [
-	// "http://localhost:3001",
+const PCList = {
+	PC1: "http://172.18.36.181:3001", // LAN
+	PC2: "http://172.18.36.229:3001", // LAN
+	PC3: "http://localhost:3001", // local
 	// "http://192.168.56.102:3001", // VM
-	"https://test.loca.lt", // localtunnel
-	"https://ancient-snake-83.loca.lt", // localtunnel
-];
+	// "https://test.loca.lt", // localtunnel
+};
+
+const urls = Object.values(PCList);
+const names = Object.keys(PCList);
 
 async function sendRequests(urls, config) {
 	let returnData = [];
@@ -34,14 +38,21 @@ async function sendRequests(urls, config) {
 		axios({
 			...config,
 			url: url + config.type,
+			port: 3001,
+			timeout: 3000,
 		})
 	);
 	let results = await Promise.allSettled(requests);
 	results.forEach((res, index) => {
 		if (res.status === "fulfilled") {
-			returnData.push({ id: index, data: res.value.data });
+			returnData.push({ id: names[index], data: res.value.data });
 		} else {
-			returnData.push({ id: index, status: "failed", reason: res.reason.code, url: res.reason.config.url });
+			returnData.push({
+				id: names[index],
+				status: "failed",
+				reason: res.reason.code,
+				url: res.reason.config.url,
+			});
 		}
 	});
 	return returnData;
@@ -51,13 +62,19 @@ const adminIo = io.of("/admin");
 
 adminIo.on("connection", (socket) => {
 	console.log("Admin Connected =>", socket.id);
+
 	socket.on("shutdown", async (id, callback) => {
-		const data = await sendRequests(id ? [urls[id]] : urls, { method: "get", type: "/shutdown" });
+		const data = await sendRequests(id ? [PCList[id]] : urls, { method: "get", type: "/shutdown" });
+		callback(data);
+	});
+
+	socket.on("reboot", async (id, callback) => {
+		const data = await sendRequests(id ? [PCList[id]] : urls, { method: "get", type: "/reboot" });
 		callback(data);
 	});
 
 	socket.on("search", async (applicationName, id, callback) => {
-		const data = await sendRequests(id ? [urls[id]] : urls, {
+		const data = await sendRequests(id ? [PCList[id]] : urls, {
 			method: "get",
 			type: "/search",
 			params: { name: applicationName },
@@ -66,22 +83,22 @@ adminIo.on("connection", (socket) => {
 	});
 
 	socket.on("info", async (id, callback) => {
-		const data = await sendRequests(id ? [urls[id]] : urls, { method: "get", type: "/info" });
+		const data = await sendRequests(id ? [PCList[id]] : urls, { method: "get", type: "/info" });
 		callback(data);
 	});
 
 	socket.on("applications", async (id, callback) => {
-		const data = await sendRequests(id ? [urls[id]] : urls, { method: "get", type: "/applications" });
+		const data = await sendRequests(id ? [PCList[id]] : urls, { method: "get", type: "/applications" });
 		callback(data);
 	});
 
 	socket.on("peripherals", async (id, callback) => {
-		const data = await sendRequests(id ? [urls[id]] : urls, { method: "get", type: "/peripherals" });
+		const data = await sendRequests(id ? [PCList[id]] : urls, { method: "get", type: "/peripherals" });
 		callback(data);
 	});
 
-	socket.on("installed_from_list", async (applications, id, callback) => {
-		const data = await sendRequests(id ? [urls[id]] : urls, {
+	socket.on("installed-from-list", async (applications, id, callback) => {
+		const data = await sendRequests(id ? [PCList[id]] : urls, {
 			method: "get",
 			type: "/installed_from_list",
 			data: applications.join(","),
@@ -89,14 +106,14 @@ adminIo.on("connection", (socket) => {
 		callback(data);
 	});
 
-	socket.on("all_data", async (id, applications, callback) => {
-		const info = await sendRequests([urls[id]], { method: "get", type: "/info" });
-		const installed_apps = await sendRequests([urls[id]], {
+	socket.on("all-data", async (id, applications, callback) => {
+		const info = await sendRequests([PCList[id]], { method: "get", type: "/info" });
+		const installed_apps = await sendRequests([PCList[id]], {
 			method: "get",
 			type: "/installed_from_list",
 			data: applications.join(","),
 		});
-		const peripherals = await sendRequests([urls[id]], { method: "get", type: "/peripherals" });
+		const peripherals = await sendRequests([PCList[id]], { method: "get", type: "/peripherals" });
 		const data = { info: info[0].data, applications: installed_apps[0].data, peripherals: peripherals[0].data };
 		callback(data);
 	});
@@ -107,6 +124,10 @@ adminIo.on("connection", (socket) => {
 // 	console.log("Listening on port 3000...");
 // });
 
-server.listen(3000, () => {
+server.listen(3000, "172.18.36.201", () => {
 	console.log("Listening on port 3000...");
 });
+
+// server.listen(3000, "172.18.36.201", () => {
+// 	console.log("Listening on port 3000...");
+// });

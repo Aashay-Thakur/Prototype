@@ -46,7 +46,7 @@ if exist package.json (
 ) else (
     echo package.json does not exist
     echo downloading package.json
-    curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/package.json -O
+    curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/package.json -O
 )
 if errorlevel 0 (
     goto :continue
@@ -89,7 +89,7 @@ if errorlevel 1 (
     echo python virtual environment created
 )
 echo downloading requirements.txt
-curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/requirements.txt -O
+curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/requirements.txt -O
 if exist requirements.txt (
     echo requirements.txt exists
 ) else (
@@ -122,7 +122,7 @@ if errorlevel 1 (
 )
 del temp.txt
 echo downloading agent.py
-curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/agent.py -O
+curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/agent.py -O
 if exist agent.py (
     echo downloaded agent.py successfully
 ) else (

@@ -1,4 +1,3 @@
-// import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { SocketContextProvider } from "./components/SocketContext.jsx";
@@ -14,4 +13,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 	</SocketContextProvider>
 	// </React.StrictMode>,
 );
-

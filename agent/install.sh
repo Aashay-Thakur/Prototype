@@ -8,47 +8,47 @@ RESET='\033[0m'
 
 echo "---Checking for dependencies---"
 
-if command -v curl &>/dev/null; then
-    echo "curl is installed"
+if command -v wget &>/dev/null; then
+    echo "wget is installed"
 else
-    echo "curl is not installed"
-    echo "Please install curl"
+    echo "wget is not installed"
+    # echo "Please install curl"
     echo "Press any key to exit..."
     read -n 1 -s
     exit
 fi
 
-if command -v node &>/dev/null; then
-    echo "node is installed"
-else
-    echo "node is not installed"
-    echo "installing nodejs"
-    sudo apt-get install nodejs -y
-    if [ $? -eq 1 ]; then
-        echo "Failed to install nodejs"
-        echo "Press any key to exit..."
-        read -n 1 -s
-        exit
-    else
-        echo "nodejs installed"
-    fi
-fi
+# if command -v node &>/dev/null; then
+#     echo "node is installed"
+# else
+#     echo "node is not installed"
+#     echo "installing nodejs"
+#     sudo apt-get install nodejs -y
+#     if [ $? -eq 1 ]; then
+#         echo "Failed to install nodejs"
+#         echo "Press any key to exit..."
+#         read -n 1 -s
+#         exit
+#     else
+#         echo "nodejs installed"
+#     fi
+# fi
 
-if command -v npm &>/dev/null; then
-    echo "npm is installed"
-else
-    echo "npm is not installed"
-    echo "installing npm"
-    apt-get install npm -y
-    if [ $? -eq 1 ]; then
-        echo "Failed to install npm"
-        echo "Press any key to exit..."
-        read -n 1 -s
-        exit
-    else
-        echo "npm installed"
-    fi
-fi
+# if command -v npm &>/dev/null; then
+#     echo "npm is installed"
+# else
+#     echo "npm is not installed"
+#     echo "installing npm"
+#     apt-get install npm -y
+#     if [ $? -eq 1 ]; then
+#         echo "Failed to install npm"
+#         echo "Press any key to exit..."
+#         read -n 1 -s
+#         exit
+#     else
+#         echo "npm installed"
+#     fi
+# fi
 
 if command -v python3 &>/dev/null; then
     echo "python3 is installed"
@@ -82,38 +82,38 @@ else
     fi
 fi
 
-if [ -f package.json ]; then
-    echo "package.json exists"
-else
-    echo "package.json does not exist"
-    echo "Downloading package.json"
-    curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/package.json -O
-fi
+# if [ -f package.json ]; then
+#     echo "package.json exists"
+# else
+#     echo "package.json does not exist"
+#     echo "Downloading package.json"
+#     wget -O package.json https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/package.json
+# fi
 
-if [ $? -eq 0 ]; then
-    echo "package.json downloaded successfully"
-else
-    echo "Failed to download package.json"
-    echo "Looks like package.json was not downloaded successfully"
-    echo "Creating package.json"
-    npm init -y
-    if [ $? -eq 1 ]; then
-        echo "Failed to create package.json"
-        echo "Press any key to exit..."
-        read -n 1 -s
-        exit
-    else
-        echo "package.json created"
-    fi
-fi
+# if [ $? -eq 0 ]; then
+#     echo "package.json downloaded successfully"
+# else
+#     echo "Failed to download package.json"
+#     echo "Looks like package.json was not downloaded successfully"
+#     echo "Creating package.json"
+#     npm init -y
+#     if [ $? -eq 1 ]; then
+#         echo "Failed to create package.json"
+#         echo "Press any key to exit..."
+#         read -n 1 -s
+#         exit
+#     else
+#         echo "package.json created"
+#     fi
+# fi
 
-if command -v npx localtunnel &>/dev/null; then
-    echo "localtunnel is installed"
-else
-    echo "localtunnel is not installed"
-    echo "Installing localtunnel"
-    npm install localtunnel
-fi
+# if command -v npx localtunnel &>/dev/null; then
+#     echo "localtunnel is installed"
+# else
+#     echo "localtunnel is not installed"
+#     echo "Installing localtunnel"
+#     npm install localtunnel
+# fi
 
 if [ -d venv ]; then
     echo "venv exists"
@@ -140,7 +140,7 @@ else
 fi
 
 echo "Downloading requirements.txt"
-curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/requirements.txt -O
+wget -O requirements.txt https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/requirements.txt
 
 if [ $? -eq 0  ]; then
     echo "requirements.txt downloaded successfully"
@@ -185,7 +185,7 @@ fi
 pip install -r requirements.txt
 
 echo "Downloading agent.py"
-curl https://raw.githubusercontent.com/Aashay-Thakur/Prototype/main/agent/agent.py -O
+wget -O agent.py https://raw.githubusercontent.com/Aashay-Thakur/Prototype/react/agent/agent.py
 
 if [ $? -eq 0 ]; then
     echo "Downloaded agent.py successfully"
@@ -194,13 +194,13 @@ else
     echo "Looks like agent.py was not downloaded successfully"
     echo "Press any key to exit..."
     read -n 1 -s
-    exit
+    # exit
 fi
 
 apt install dbus-x11
 echo "---Installation complete---"
-echo "Starting a localtunnel session in a new window"
+# echo "Starting a localtunnel session in a new window"
 # sudo -u mca gnome-terminal -- bash -c "npx lt -s test -p 3001; exec bash -i"
-gnome-terminal -- bash -c "npm run expose; exec bash -i"
+# gnome-terminal -- bash -c "npm run expose; exec bash -i"
 echo "Starting agent.py"
 python3 agent.py

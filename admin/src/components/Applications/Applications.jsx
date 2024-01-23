@@ -10,7 +10,7 @@ function Applications() {
 
 	useEffect(() => {
 		if (socket) {
-			socket.emit("installed_from_list", applicationList, null, (response) => {
+			socket.emit("installed-from-list", applicationList, null, (response) => {
 				setApplications(response);
 				console.log(response);
 			});
